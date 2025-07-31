@@ -1,0 +1,46 @@
+# Python Setup Verification
+
+# Workflow Steps
+# 1. Trigger Condition
+    # On every push to any branch
+
+# 2. Python Setup
+    # Set up Python 3.9
+
+# 3. Dependency Installation
+    # Upgrade pip, Python Package Installer, Install pytest and flake8
+
+# 4. Verification
+    # Check python Version, Run Flake8 Linting, Run Pytest
+
+name: Python Setup Verification
+
+on:
+  push:
+
+jobs:
+  setup-python:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'  # version must be quoted
+
+    - name: Upgrade pip and Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest flake8
+
+    - name: Check Python Version
+      run: python --version
+
+    - name: Verify flake8 Installation
+      run: flake8 --version
+
+    - name: Verify pytest Installation
+      run: pytest --version
