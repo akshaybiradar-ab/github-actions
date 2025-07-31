@@ -1,0 +1,24 @@
+# Workflow Steps
+
+# 1. Create Repository Variable
+      # Create a variable named ACCESS_ID with the value FooBar123
+# 2. Retrieve the ACCESS_ID value dynamically
+      # Print the ACCESS_ID value in the workflow logs
+# 3. Trigger workflow on every push
+
+name: Access ID Workflow
+
+on:
+  push:
+
+jobs:
+  print-access-id:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Print ACCESS_ID
+        run: echo "The ACCESS_ID is $ACCESS_ID"
+        env:
+          ACCESS_ID: ${{ vars.ACCESS_ID }}
