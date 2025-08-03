@@ -1,0 +1,36 @@
+name: Build and Test Go App
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  build-test-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Run Go Tests
+        run: go test ./...
+
+      - name: Install Docker (if not already)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+
+      - name: Build Docker Image with Custom Tags
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          TAG_NAME="${{ github.ref_name }}"
+          TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
+          IMAGE_NAME="goapp:${TIMESTAMP}-${TAG_NAME}-${SHORT_SHA}"
+          echo "Building image with tag: $IMAGE_NAME"
+          docker build -t $IMAGE_NAME .
