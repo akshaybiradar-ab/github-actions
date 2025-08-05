@@ -1,0 +1,45 @@
+name: PostgreSQL Service
+
+on:
+  push:
+    # Automatically when a .yml file is changed and pushed.
+    # paths:
+    #   - '**.yml'
+  # Manually by clicking "Run workflow" in the GitHub Actions UI.
+  workflow_dispatch:
+
+jobs:
+  test-postgres:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:11
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd="pg_isready -U testuser"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          for i in {1..30}; do
+            if nc -z localhost 5432; then
+              echo "PostgreSQL is up and running!"
+              break
+            fi
+            echo "PostgreSQL not ready yet... waiting"
+            sleep 1
+          done
+
+      - name: Confirm PostgreSQL Service
+        run: |
+          PGPASSWORD=testpass psql -h localhost -U testuser -d testdb -c '\l'
