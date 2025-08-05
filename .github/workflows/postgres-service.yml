@@ -14,13 +14,13 @@ jobs:
 
     services:
       postgres:
-        image: postgres:11
+        image: postgres:13
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: testdb
         ports:
           - 5432:5432
-        env:
-          POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpass
-          POSTGRES_DB: testdb
         options: >-
           --health-cmd="pg_isready"
           --health-interval=10s
@@ -28,18 +28,23 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Wait for PostgreSQL to be ready
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for PostgreSQL port using  Netcat (nc) Check
         run: |
-          echo "Waiting for PostgreSQL to be ready..."
+          echo "Waiting for PostgreSQL to be ready on port 5432..."
           for i in {1..30}; do
             if nc -z localhost 5432; then
-              echo "PostgreSQL is up and running!"
+              echo "PostgreSQL is up!"
               break
             fi
-            echo "PostgreSQL not ready yet... waiting"
+            echo "PostgreSQL not ready yet... retrying in 1s"
             sleep 1
           done
 
-      - name: Confirm PostgreSQL Service
+      - name: Test PostgreSQL Connection
         run: |
-          PGPASSWORD=testpass psql -h localhost -U testuser -d testdb -c '\l'
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=password psql -h localhost -U user -d testdb -c '\l'
