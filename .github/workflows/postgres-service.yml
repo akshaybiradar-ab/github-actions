@@ -1,11 +1,7 @@
-name: PostgreSQL Service
+name: PostgreSQL Service Test
 
 on:
   push:
-    # Automatically when a .yml file is changed and pushed.
-    # paths:
-    #   - '**.yml'
-  # Manually by clicking "Run workflow" in the GitHub Actions UI.
   workflow_dispatch:
 
 jobs:
@@ -28,22 +24,21 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Wait for PostgreSQL port using  Netcat (nc) Check
+      - name: Wait for PostgreSQL (port 5432) using nc
         run: |
-          echo "Waiting for PostgreSQL to be ready on port 5432..."
+          echo "Waiting for PostgreSQL to be ready..."
           for i in {1..30}; do
-            if nc -z localhost 5432; then
-              echo "PostgreSQL is up!"
-              break
-            fi
-            echo "PostgreSQL not ready yet... retrying in 1s"
+            nc -z localhost 5432 && echo "PostgreSQL is ready!" && exit 0
+            echo "PostgreSQL not ready yet. Retrying in 1 second..."
             sleep 1
           done
+          echo "PostgreSQL did not become ready in time." >&2
+          exit 1
 
-      - name: Test PostgreSQL Connection
+      - name: Connect to PostgreSQL and run a command
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql-client
