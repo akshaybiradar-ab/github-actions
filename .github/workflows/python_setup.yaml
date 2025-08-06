@@ -17,6 +17,7 @@ name: Python Setup Verification
 
 on:
   push:
+    branches: [main]
 
 jobs:
   setup-python:
