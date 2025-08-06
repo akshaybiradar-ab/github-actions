@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'python/**/*.py'  # Only triggers if Python files inside 'python/' change
+      # - '**.py' # Trigger if Python files in current directory change
 
 jobs:
   lint:
@@ -23,3 +24,4 @@ jobs:
 
       - name: Run flake8 on python directory or specific file
         run: flake8 python/
+        # run: flake8 specific_python_file.py
