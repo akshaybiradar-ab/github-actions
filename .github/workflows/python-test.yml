@@ -24,6 +24,6 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest python/ --cov=python.add --cov-report=term-missing
+          pytest python/ --cov=python.add_script --cov-report=term-missing
           # pytest directory/ --cov=directory.file_name --cov-report=term-missing
           # pytest --cov=script --cov-report=term-missing
