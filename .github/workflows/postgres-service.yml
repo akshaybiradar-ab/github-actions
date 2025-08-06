@@ -27,6 +27,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install netcat
+        run: sudo apt-get update && sudo apt-get install -y netcat
+
       - name: Wait for PostgreSQL (port 5432) using nc
         run: |
           echo "Waiting for PostgreSQL to be ready..."
@@ -40,6 +43,5 @@ jobs:
 
       - name: Connect to PostgreSQL and run a command
         run: |
-          sudo apt-get update
           sudo apt-get install -y postgresql-client
           PGPASSWORD=password psql -h localhost -U user -d testdb -c '\l'
