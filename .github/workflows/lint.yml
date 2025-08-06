@@ -1,0 +1,25 @@
+name: Python Linting
+
+on:
+  push:
+    paths:
+      - 'python/**/*.py'  # Only triggers if Python files inside 'python/' change
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Run flake8 on python directory or specific file
+        run: flake8 python/
