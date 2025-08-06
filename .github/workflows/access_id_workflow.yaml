@@ -10,6 +10,8 @@ name: Access ID Workflow
 
 on:
   push:
+     branches:
+       - main
 
 jobs:
   print-access-id:
