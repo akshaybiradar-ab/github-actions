@@ -30,20 +30,13 @@ jobs:
       - name: Install netcat
         run: sudo apt-get update && sudo apt-get install -y netcat-openbsd
 
-      - name: Wait for PostgreSQL using nc
+      - name: Wait for PostgreSQL to be ready
         run: |
-          echo "Waiting for PostgreSQL to be ready on port 5432..."
-          for i in {1..30}; do
-            if ! nc -z localhost 5432; then
-              echo "PostgreSQL not ready yet. Retrying in 1 second..."
-              sleep 1
-            else
-              echo "PostgreSQL is ready!"
-              exit 0
-            fi
+          echo "Waiting for PostgreSQL..."
+          while ! nc -z localhost 5432; do   
+            sleep 1
           done
-          echo "PostgreSQL did not become ready in time." >&2
-          exit 1
+          echo "PostgreSQL is ready!"
 
       - name: Connect to PostgreSQL and run a command
         run: |
